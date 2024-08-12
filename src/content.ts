@@ -5,9 +5,9 @@ chrome.runtime.sendMessage({ action: 'startMonitoring' });
 
 document.addEventListener('contextmenu', (event) => {
     let element = event.target as HTMLElement;
-    // while (element && element.tagName !== 'DIV') {
-    //   element = element.parentElement;
-    // }
+    while (element && element.tagName !== 'DIV') {
+      element = element.parentElement!;
+    }
 
     if (element) {
         const img = element.querySelector('img');
@@ -22,6 +22,9 @@ document.addEventListener('contextmenu', (event) => {
                         imageUrl: response.imageUrl,
                         fileName: document.title + ".png"
                     });
+                }
+                else {
+                    console.log("Image capture failed");
                 }
             });
 

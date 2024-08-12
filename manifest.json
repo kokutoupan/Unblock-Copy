@@ -4,19 +4,13 @@
     "version": "1.0",
     "description": "A sample Chrome extension using TypeScript",
     "action": {
-        "default_popup": "src/popup.html",
         "default_icon": "icon.png"
     },
     "background": {
         "service_worker": "dist/background.js"
     },
     "permissions": [
-        "storage",
-        "contextMenus",
         "activeTab",
-        "webRequest",
-        "webRequestBlocking",
-        "<all_urls>",
         "debugger",
         "downloads"
     ],

@@ -1,9 +1,6 @@
 chrome.runtime.onInstalled.addListener(() => {
     console.log('Extension installed');
 });
-interface CaptureScreenshotResponse {
-    data: string; // Base64 encoded screenshot data
-}
 
 // 型定義の修正
 interface NetworkGetResponseBodyResponse {
@@ -67,11 +64,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
                         if (result && res.body) {
                             const imageUrl = `data:image/png;base64,${res.body}`;
-
-                            chrome.storage.local.set({ imageUrl: imageUrl }, () => {
-                                console.log('Image URL saved');
-                                sendResponse({ success: true, imageUrl: imageUrl });
-                            });
+                            console.log('Image URL:', imageUrl);
+                            sendResponse({ success: true, imageUrl: imageUrl });
                         } else {
                             console.error('No image data received.');
                             sendResponse({ success: false });
@@ -106,71 +100,12 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
                     const event = params as NetworkRequestWillBeSentEvent;
                     const requestId = event.requestId;
                     const requestUrl = event.request.url;
-                    // if (requestUrl.startsWith('https://assets.xfolio.jp')) {
                     // リクエストID をストレージに保存または他の方法で使用
 
                     checkedUrls.push(new requestIdUrl(requestUrl, requestId));
-                    // }
                 }
             });
         });
     });
 
 });
-
-chrome.action.onClicked.addListener((tab) => {
-    console.log('Action button clicked:', tab);
-    chrome.debugger.attach({ tabId: tab.id }, '1.0', () => {
-        chrome.debugger.sendCommand({ tabId: tab.id }, 'Page.captureScreenshot', { format: 'png' }, (result) => {
-            if (chrome.runtime.lastError) {
-                console.error(chrome.runtime.lastError.message);
-                return;
-            }
-            const response = result as CaptureScreenshotResponse;
-
-            const imageUrl = `data:image/png;base64,${response.data}`;
-            console.log('Image URL:', imageUrl);
-
-            chrome.storage.local.set({ imageUrl: imageUrl }, () => {
-                console.log('Image URL saved');
-            });
-
-            chrome.debugger.detach({ tabId: tab.id });
-        });
-    });
-});
-
-
-function addToArrayInStorage(key: string, newElement: any) {
-    // 現在の配列を取得
-    chrome.storage.local.get(key, (result) => {
-        let currentArray: any[] = Array.isArray(result[key]) ? result[key] : [];
-
-        // 新しい要素を配列の末尾に追加
-        currentArray.push(newElement);
-
-        // 更新された配列を保存
-        chrome.storage.local.set({ [key]: currentArray }, () => {
-            // console.log('Updated array saved to storage:', currentArray);
-        });
-    });
-}
-
-function ensureDebuggerAttached(tabId: number, callback: () => void) {
-    chrome.debugger.getTargets((targets) => {
-        const alreadyAttached = targets.some(target => target.tabId === tabId);
-
-        if (alreadyAttached) {
-            chrome.debugger.detach({ tabId: tabId }, () => {
-                if (chrome.runtime.lastError) {
-                    console.error('Error detaching debugger:', chrome.runtime.lastError);
-                }
-                // Attach debugger after detaching
-                chrome.debugger.attach({ tabId: tabId }, '1.0', callback);
-            });
-        } else {
-            // Attach debugger directly if not attached
-            chrome.debugger.attach({ tabId: tabId }, '1.0', callback);
-        }
-    });
-}
