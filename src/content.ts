@@ -3,10 +3,14 @@ console.log("Content script running");
 chrome.runtime.sendMessage({ action: 'startMonitoring' });
 // });
 
+document.addEventListener('DOMContentLoaded', () => {
+    // DOMが完全に読み込まれたときに実行されるコード
+});
+
 document.addEventListener('contextmenu', (event) => {
     let element = event.target as HTMLElement;
     while (element && element.tagName !== 'DIV') {
-      element = element.parentElement!;
+        element = element.parentElement!;
     }
 
     if (element) {
@@ -25,6 +29,7 @@ document.addEventListener('contextmenu', (event) => {
                 }
                 else {
                     console.log("Image capture failed");
+                    console.log(response.status);
                 }
             });
 

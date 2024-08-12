@@ -49,7 +49,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     const matchData = checkedUrls.find((item: any) => { return item.url == message.requestUrl; });
                     if (!matchData) {
                         console.error('No matching data found for URL:', message.requestUrl);
-                        sendResponse({ success: false });
+                        sendResponse({ success: false ,status : "No matching data found for URL"});
                         return;
                     }
                     const requestId = matchData.requestId;
@@ -57,7 +57,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                     chrome.debugger.sendCommand({ tabId: tabId }, 'Network.getResponseBody', { requestId: requestId }, (result) => {
                         if (chrome.runtime.lastError) {
                             console.error('Debugger command failed:', chrome.runtime.lastError);
-                            sendResponse({ success: false });
+                            sendResponse({ success: false, status:  chrome.runtime.lastError });
                             return;
                         }
                         const res = result as NetworkGetResponseBodyResponse;
@@ -68,7 +68,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                             sendResponse({ success: true, imageUrl: imageUrl });
                         } else {
                             console.error('No image data received.');
-                            sendResponse({ success: false });
+                            sendResponse({ success: false ,status : "No image data received"});
                         }
 
                         // chrome.debugger.detach({ tabId: tabId });
