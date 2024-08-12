@@ -68,9 +68,59 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 });
+// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+//     console.log('Tab activated:', changeInfo);
+//     chrome.debugger.attach({ tabId: tabId }, '1.0', (error?: chrome.runtime.LastError) => {
+//         if (error) {
+//             console.error('Debugger attach failed:', error);
+//             return;
+//         }
+//         console.log('Debugger attached');
+//         chrome.debugger.sendCommand({ tabId: tabId }, 'Network.enable', {}, () => {
+//             console.log('Network enabled');
+//             chrome.debugger.onEvent.addListener((debuggeeId, message, params) => {
+//                 if (message === 'Network.requestWillBeSent') {
+//                     const event = params as NetworkRequestWillBeSentEvent;
+//                     const requestId = event.requestId;
+//                     const requestUrl = event.request.url;
+//                     // リクエストID をストレージに保存または他の方法で使用
+//                     checkedUrls.push(new requestIdUrl(requestUrl, requestId));
+//                 }
+//             });
+//         });
+//     });
+// });
+chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs.length > 0) {
+        const tabId = tabs[0].id;
+        chrome.debugger.attach({ tabId: tabId }, '1.0', (error) => {
+            if (error) {
+                console.error('Debugger attach failed:', error);
+                return;
+            }
+            console.log('Debugger attached');
+            chrome.debugger.sendCommand({ tabId: tabId }, 'Network.enable', {}, () => {
+                console.log('Network enabled');
+                chrome.debugger.onEvent.addListener((debuggeeId, message, params) => {
+                    if (message === 'Network.requestWillBeSent') {
+                        const event = params;
+                        const requestId = event.requestId;
+                        const requestUrl = event.request.url;
+                        // リクエストID をストレージに保存または他の方法で使用
+                        checkedUrls.push(new requestIdUrl(requestUrl, requestId));
+                    }
+                });
+            });
+        });
+    }
+});
 chrome.tabs.onActivated.addListener((activeInfo) => {
     console.log('Tab activated:', activeInfo);
-    chrome.debugger.attach({ tabId: activeInfo.tabId }, '1.0', () => {
+    chrome.debugger.attach({ tabId: activeInfo.tabId }, '1.0', (error) => {
+        if (error) {
+            console.error('Debugger attach failed:', error);
+            return;
+        }
         console.log('Debugger attached');
         chrome.debugger.sendCommand({ tabId: activeInfo.tabId }, 'Network.enable', {}, () => {
             console.log('Network enabled');
