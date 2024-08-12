@@ -31,12 +31,11 @@ let checkedUrls: Array<requestIdUrl> = new Array<requestIdUrl>();
 
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === "storeClickedElement") {
-        chrome.storage.local.set({ clickedElement: message.elementHTML });
-    }
+
     if (message.type === "downloadImage") {
         chrome.downloads.download({
             url: message.imageUrl,
+            filename: message.fileName,
             saveAs: true
         });
     }
@@ -71,7 +70,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
                             chrome.storage.local.set({ imageUrl: imageUrl }, () => {
                                 console.log('Image URL saved');
-                                sendResponse({ success: true });
+                                sendResponse({ success: true, imageUrl: imageUrl });
                             });
                         } else {
                             console.error('No image data received.');
@@ -98,7 +97,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 chrome.tabs.onActivated.addListener((activeInfo) => {
     console.log('Tab activated:', activeInfo);
-    chrome.debugger.attach({ tabId: activeInfo.tabId },'1.0', () => {
+    chrome.debugger.attach({ tabId: activeInfo.tabId }, '1.0', () => {
         console.log('Debugger attached');
         chrome.debugger.sendCommand({ tabId: activeInfo.tabId }, 'Network.enable', {}, () => {
             console.log('Network enabled');
@@ -107,11 +106,11 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
                     const event = params as NetworkRequestWillBeSentEvent;
                     const requestId = event.requestId;
                     const requestUrl = event.request.url;
-                    if (requestUrl.startsWith('https://assets.xfolio.jp')) {
-                        // リクエストID をストレージに保存または他の方法で使用
+                    // if (requestUrl.startsWith('https://assets.xfolio.jp')) {
+                    // リクエストID をストレージに保存または他の方法で使用
 
-                        checkedUrls.push(new requestIdUrl(requestUrl, requestId));
-                    }
+                    checkedUrls.push(new requestIdUrl(requestUrl, requestId));
+                    // }
                 }
             });
         });

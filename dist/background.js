@@ -11,12 +11,10 @@ class requestIdUrl {
 let requestIds = new Array();
 let checkedUrls = new Array();
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === "storeClickedElement") {
-        chrome.storage.local.set({ clickedElement: message.elementHTML });
-    }
     if (message.type === "downloadImage") {
         chrome.downloads.download({
             url: message.imageUrl,
+            filename: message.fileName,
             saveAs: true
         });
     }
@@ -47,7 +45,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                             const imageUrl = `data:image/png;base64,${res.body}`;
                             chrome.storage.local.set({ imageUrl: imageUrl }, () => {
                                 console.log('Image URL saved');
-                                sendResponse({ success: true });
+                                sendResponse({ success: true, imageUrl: imageUrl });
                             });
                         }
                         else {
@@ -83,10 +81,10 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
                     const event = params;
                     const requestId = event.requestId;
                     const requestUrl = event.request.url;
-                    if (requestUrl.startsWith('https://assets.xfolio.jp')) {
-                        // リクエストID をストレージに保存または他の方法で使用
-                        checkedUrls.push(new requestIdUrl(requestUrl, requestId));
-                    }
+                    // if (requestUrl.startsWith('https://assets.xfolio.jp')) {
+                    // リクエストID をストレージに保存または他の方法で使用
+                    checkedUrls.push(new requestIdUrl(requestUrl, requestId));
+                    // }
                 }
             });
         });
