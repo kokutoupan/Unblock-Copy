@@ -79,10 +79,8 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
                     const event = params;
                     const requestId = event.requestId;
                     const requestUrl = event.request.url;
-                    // if (requestUrl.startsWith('https://assets.xfolio.jp')) {
                     // リクエストID をストレージに保存または他の方法で使用
                     checkedUrls.push(new requestIdUrl(requestUrl, requestId));
-                    // }
                 }
             });
         });
