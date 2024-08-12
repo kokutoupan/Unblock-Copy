@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "My Chrome Extension",
+    "name": "Unblock Copy",
     "version": "1.0",
-    "description": "A sample Chrome extension using TypeScript",
+    "description": "Unblock Copy extension",
     "action": {
         "default_icon": "icon.png"
     },
