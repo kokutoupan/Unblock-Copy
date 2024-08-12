@@ -1,0 +1,17 @@
+{
+  "name": "xfoliohack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chrome": "^0.0.269",
+    "typescript": "^5.5.4"
+  }
+}

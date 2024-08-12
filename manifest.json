@@ -1,0 +1,36 @@
+{
+    "manifest_version": 3,
+    "name": "My Chrome Extension",
+    "version": "1.0",
+    "description": "A sample Chrome extension using TypeScript",
+    "action": {
+        "default_popup": "src/popup.html",
+        "default_icon": "icon.png"
+    },
+    "background": {
+        "service_worker": "dist/background.js"
+    },
+    "permissions": [
+        "storage",
+        "contextMenus",
+        "activeTab",
+        "webRequest",
+        "webRequestBlocking",
+        "<all_urls>",
+        "debugger"
+    ],
+    "host_permissions": [
+        "http://*/*",
+        "https://*/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "dist/content.js"
+            ]
+        }
+    ]
+}
