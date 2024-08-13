@@ -24,7 +24,7 @@ document.addEventListener('contextmenu', (event) => {
                     chrome.runtime.sendMessage({
                         type: "downloadImage",
                         imageUrl: response.imageUrl,
-                        fileName: document.title + ".png"
+                        fileName: document.title + '.' + response.format
                     });
                 }
                 else {
